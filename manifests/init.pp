@@ -56,4 +56,13 @@ class geminabox (
     group  => 'root',
     content => template('geminabox/geminabox.conf.erb')
   }
+
+  service { 'geminabox':
+    ensure     => 'running',
+    enable     => true,
+    subscribe => [
+      File['/etc/init/geminabox.conf'],
+      File["$root/config.ru"],
+    ],
+  }
 }
