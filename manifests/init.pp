@@ -33,14 +33,6 @@ class geminabox (
     require => User[$user],
   }
 
-  file { "$root/Gemfile":
-    ensure  => 'present',
-    content => template('geminabox/Gemfile.erb'),
-    owner => $user,
-    group => $group,
-    notify  => Exec['bundle geminabox'],
-  }
-
   file { "$root/config.ru":
     ensure => 'present',
     content => template('geminabox/config.ru.erb'),
@@ -48,14 +40,14 @@ class geminabox (
     group => $group,
   }
 
-  exec { 'bundle geminabox':
-    command     => 'bundle install --binstubs',
-    refreshonly => true,
-    cwd         => $root,
-    user        => $user,
-    provider    => 'shell',
-    environment => "HOME=$root",
-    require     => Package['bundler'],
+  package { 'thin':
+    provider => 'gem',
+    ensure   => 'present',
+  }
+
+  package { 'geminabox':
+    provider => 'gem',
+    ensure   => $version,
   }
 
   file { '/etc/init/geminabox.conf':
