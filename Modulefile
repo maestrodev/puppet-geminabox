@@ -8,3 +8,4 @@ description "Installs the `geminabox` rubygem server, and configures it to run
 project_page 'https://github.com/dgoodlad/puppet-geminabox'
 license 'MIT'
 author 'David Goodlad'
+source 'https://github.com/dgoodlad/puppet-geminabox.git'
