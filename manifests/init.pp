@@ -26,17 +26,21 @@ class geminabox (
   $version = "~> 0.8",
   $port    = 8080,
 ) {
-  group { $group:
-    ensure => 'present',
-    system => true,
+  if !defined(Group[$group]) {
+    group { $group:
+      ensure => 'present',
+      system => true,
+    }
   }
 
-  user { $user:
-    ensure     => 'present',
-    system     => true,
-    gid        => $group,
-    home       => $root,
-    managehome => true,
+  if !defined(User[$user]) {
+    user { $user:
+      ensure     => 'present',
+      system     => true,
+      gid        => $group,
+      home       => $root,
+      managehome => true,
+    }
   }
 
   file { $datadir:
