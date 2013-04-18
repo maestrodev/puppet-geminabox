@@ -9,14 +9,16 @@
 #   service_name: the name of the service (this affects the configuration file, init script, and process name)
 #   user:         the user to own and run geminabox
 #   group:        the group to own and run geminabox
-#   manage_user:  whether or not to manage the user resource for the given user
-#   manage_group: whether or not to manage the group resource for the given group
 #   version:      a rubygem-style version, specifying the desired geminabox version
 #   port:         port on which the geminabox http server will listen
 #   thin_options: any additional params to pass to thin (see templates/geminabox.init.erb for what's already set)
 #   rvm_path:     the path that the rvm binary can be found in
 #   rvm_deps:     wait for these resource deps before attempting installing the version of ruby we care about via rvm
 #   ruby_version: the version of ruby we want to ensure is installed and use in our init script
+#   manage_user:  whether or not to manage the user resource for the given user
+#   manage_group: whether or not to manage the group resource for the given group
+#   manage_data_dir: whether or not to manage the data directory (disable if file resource is externally created)
+#   manage_config_dir: whether or not to manage the config directory (disable if file resource is externally created)
 #
 # Example Usage:
 #
@@ -35,14 +37,16 @@ class geminabox (
   $service_name = "geminabox",
   $user         = "geminabox",
   $group        = "geminabox",
-  $manage_user  = true,
-  $manage_group = true,
   $version      = "~> 0.10.1",
   $port         = 8080,
   $thin_options = "-d",
   $rvm_path     = "/usr/local/rvm/bin",
   $rvm_deps     = [Class["rvm"]],
   $ruby_version = "1.9.3",
+  $manage_user  = true,
+  $manage_group = true,
+  $manage_data_dir = true,
+  $manage_config_dir = true,
 ) {
 
   # manage users and groups
@@ -64,7 +68,7 @@ class geminabox (
   }
 
   # ensure directories exist
-  if !defined(File[$config_dir]) {
+  if $manage_config_dir {
     file { $config_dir:
       ensure => 'directory',
       owner => $user,
@@ -72,8 +76,8 @@ class geminabox (
       require => User[$user],
     }
   }
-
-  if !defined(File[$data_dir]) {
+  
+  if $manage_data_dir {
     file { $data_dir:
       ensure => 'directory',
       owner  => $user,
