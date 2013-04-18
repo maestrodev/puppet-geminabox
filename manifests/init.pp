@@ -127,6 +127,7 @@ class geminabox (
     ensure     => 'running',
     enable     => true,
     require    => Exec["geminabox-install-geminabox"],
+    hasstatus  => true,
     subscribe  => [
       File["$config_dir/$service_name.ru"],
     ],
