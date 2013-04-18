@@ -1,11 +1,11 @@
-name    'dgoodlad-geminabox'
-version '0.1.2'
-summary 'Installs and runs the geminabox rubygem server'
+name    'maestrodev-geminabox'
+version '0.1.0'
+summary 'Installs and runs the Gem In A Box rubygem server using thin'
 description "Installs the `geminabox` rubygem server, and configures it to run
     as a standard Rack application using the `thin` server.
 
-    See https://github.com/cwninja/geminabox for details about geminabox."
-project_page 'https://github.com/dgoodlad/puppet-geminabox'
+    See https://github.com/cwninja/geminabox for details about Gem In A Box."
+project_page 'https://github.com/maestrodev/puppet-geminabox'
 license 'MIT'
-author 'David Goodlad'
-source 'https://github.com/dgoodlad/puppet-geminabox.git'
+author 'David Castro'
+source 'https://github.com/maestrodev/puppet-geminabox.git'

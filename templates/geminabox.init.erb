@@ -1,0 +1,68 @@
+#!/bin/bash
+ 
+### BEGIN INIT INFO
+# Provides:          geminabox
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Gem In A Box
+# Description:       Manage Gem In A Box using the thin service
+### END INIT INFO
+ 
+if [ -s "$HOME/.rvm/scripts/rvm" ] ; then
+    source "$HOME/.rvm/scripts/rvm"
+elif [ -s "/usr/local/rvm/scripts/rvm" ] ; then
+    source "/usr/local/rvm/scripts/rvm"
+else
+    exit 0
+fi
+
+RUBY_VERSION=1.9.3
+
+# determine if the correct version of ruby is installed
+rvm list | egrep $RUBY_VERSION
+RETVAL=$?
+if [ $RETVAL -ne 0 ]; then
+  echo "Ruby $RUBY_VERSION is not installed and unable to install, exiting"
+  exit 1
+fi
+rvm use $RUBY_VERSION
+ 
+LANG="en_US.UTF-8"
+NAME="<%=@service_name%>"
+SCRIPT_NAME="<%=@init_script%>"
+GEMINABOX_HOME="<%=@data_dir%>"
+GEMINABOX_CONFIG="<%=@config_dir%>/<%=@service_name%>.ru"
+PID_FILE="<%=@pid_file%>"
+LOG_FILE="<%=@log_file%>"
+DAEMON="thin <%=@thin_options%>"
+USER="<%=@user%>"
+GROUP="<%=@group%>"
+PORT="<%=@port%>"
+ 
+start() {
+  $DAEMON --tag $NAME -u $USER -g $GROUP -c $GEMINABOX_HOME -l $LOG_FILE -P $PID_FILE -p $PORT -R $GEMINABOX_CONFIG start
+}
+
+stop() {
+  su $USER -c "$DAEMON --tag $NAME -u $USER -g $GROUP -c $GEMINABOX_HOME -l $LOG_FILE -P $PID_FILE -p $PORT -R $GEMINABOX_CONFIG stop" && \
+  rm $PID_FILE
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $SCRIPT_NAME {start|stop|restart}" >&2
+        exit 1
+        ;;
+esac
