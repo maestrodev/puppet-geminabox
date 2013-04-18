@@ -64,18 +64,22 @@ class geminabox (
   }
 
   # ensure directories exist
-  file { $config_dir:
-    ensure => 'directory',
-    owner => $user,
-    group => $group,
-    require => User[$user],
+  if !defined(File[$config_dir]) {
+    file { $config_dir:
+      ensure => 'directory',
+      owner => $user,
+      group => $group,
+      require => User[$user],
+    }
   }
 
-  file { $data_dir:
-    ensure => 'directory',
-    owner  => $user,
-    group  => $group,
-    mode   => '0770',
+  if !defined(File[$data_dir]) {
+    file { $data_dir:
+      ensure => 'directory',
+      owner  => $user,
+      group  => $group,
+      mode   => '0770',
+    }
   }
 
   # ensure necessary files are present/copied
