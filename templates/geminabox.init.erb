@@ -21,7 +21,7 @@ else
     exit 0
 fi
 
-RUBY_VERSION=1.9.3
+RUBY_VERSION=<%=@ruby_version%>
 
 # determine if the correct version of ruby is installed
 rvm list | egrep $RUBY_VERSION

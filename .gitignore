@@ -5,7 +5,10 @@
 .project
 .librarian/
 .tmp/
-.vagrant
-doc/
-spec/fixtures/
 pkg/
+doc/
+/spec/fixtures/manifests
+/spec/fixtures/modules
+.vagrant/
+tmp
+.rspec_system

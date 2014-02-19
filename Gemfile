@@ -2,9 +2,10 @@ source 'https://rubygems.org'
 
 group :rake do
   gem 'puppet'
-  gem 'rspec-puppet'
+  gem 'rspec-puppet', '>=1.0.0'
   gem 'rake'
   gem 'puppet-lint'
   gem 'puppetlabs_spec_helper'
   gem 'puppet-blacksmith', '>=1.0.5'
+  gem 'librarian-puppet', '>=0.9.12'
 end

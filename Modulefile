@@ -9,3 +9,5 @@ project_page 'https://github.com/maestrodev/puppet-geminabox'
 license 'MIT'
 author 'David Goodlad & David Castro'
 source 'https://github.com/maestrodev/puppet-geminabox.git'
+
+dependency 'maestrodev/rvm'

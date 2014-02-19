@@ -12,8 +12,6 @@
 #   version:      a rubygem-style version, specifying the desired geminabox version
 #   port:         port on which the geminabox http server will listen
 #   thin_options: any additional params to pass to thin (see templates/geminabox.init.erb for what's already set)
-#   rvm_path:     the path that the rvm binary can be found in
-#   rvm_deps:     wait for these resource deps before attempting installing the version of ruby we care about via rvm
 #   ruby_version: the version of ruby we want to ensure is installed and use in our init script
 #   manage_user:  whether or not to manage the user resource for the given user
 #   manage_group: whether or not to manage the group resource for the given group
@@ -37,12 +35,10 @@ class geminabox (
   $service_name = "geminabox",
   $user         = "geminabox",
   $group        = "geminabox",
-  $version      = "~> 0.10.1",
+  $version      = "present",
   $port         = 8080,
   $thin_options = "-d",
-  $rvm_path     = "/usr/local/rvm/bin",
-  $rvm_deps     = [Class["rvm"]],
-  $ruby_version = "1.9.3",
+  $ruby_version = "1.9",
   $manage_user  = true,
   $manage_group = true,
   $manage_data_dir = true,
@@ -108,33 +104,22 @@ class geminabox (
     group  => $group,
   }
 
-  # ensure the correct version of ruby is installed, along with the thin & geminabox gems
-  # TODO - see if there's a cleaner way of getting theme gems installed for
-  # the specific ruby version. the login shell is needed for rvm to be happy
-  exec { "geminabox-install-ruby-$ruby_version":
-    path    => [ $rvm_path, "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
-    command => "bash --login -c 'rvm install $ruby_version'",
-    unless  => "bash --login -c 'rvm list | egrep $ruby_version'",
-    require => $rvm_deps,
+  Rvm_gem {
+    ruby_version => $ruby_version,
+    before       => Service[$service_name],
   }
-  exec { "geminabox-install-thin":
-    path    => [ $rvm_path, "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
-    command => "bash --login -c 'rvm use $ruby_version && `which gem` install thin'",
-    unless  => "bash --login -c 'rvm use $ruby_version && `which gem` list | egrep thin'",
-    require => Exec["geminabox-install-ruby-$ruby_version"],
+
+  rvm_gem { 'thin':
+    ensure => present,
   }
-  exec { "geminabox-install-geminabox":
-    path    => [ $rvm_path, "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
-    command => "bash --login -c 'rvm use $ruby_version && `which gem` install geminabox'",
-    unless  => "bash --login -c 'rvm use $ruby_version && `which gem` list | egrep geminabox'",
-    require => Exec["geminabox-install-thin"],
+  rvm_gem { 'geminabox':
+    ensure => $version,
   }
 
   # ensure the geminabox service is running
   service { $service_name:
     ensure     => 'running',
     enable     => true,
-    require    => Exec["geminabox-install-geminabox"],
     hasstatus  => true,
     subscribe  => [
       File["$config_dir/$service_name.ru"],
