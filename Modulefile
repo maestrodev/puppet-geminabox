@@ -1,5 +1,5 @@
 name    'maestrodev-geminabox'
-version '1.0.1'
+version '1.0.2'
 summary 'Installs and runs the Gem In A Box rubygem server using thin'
 description "Installs the `geminabox` rubygem server, and configures it to run
     as a standard Rack application using the `thin` server.
