@@ -1,3 +1,3 @@
 forge 'http://forge.puppetlabs.com'
 
-modulefile
+mod 'maestrodev/rvm'
