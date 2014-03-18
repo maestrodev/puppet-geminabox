@@ -24,7 +24,7 @@ fi
 RUBY_VERSION=<%=@ruby_version%>
 
 # determine if the correct version of ruby is installed
-rvm list | egrep $RUBY_VERSION
+rvm list | egrep $RUBY_VERSION > /dev/null
 RETVAL=$?
 if [ $RETVAL -ne 0 ]; then
   echo "Ruby $RUBY_VERSION is not installed and unable to install, exiting"
@@ -63,6 +63,7 @@ case "$1" in
   status)
         status -p $PID_FILE geminabox
         RETVAL=$?
+        exit $RETVAL
         ;;
   restart)
         stop
