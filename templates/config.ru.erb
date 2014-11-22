@@ -2,5 +2,12 @@ require "rubygems"
 require "geminabox"
 
 Geminabox.data = "<%= @data_dir %>"
+<% if @rubygems_proxy -%>
+Geminabox.rubygems_proxy = true
+<% end -%>
+<% if @allow_remote_failure -%>
+Geminabox.allow_remote_failure = true
+<% end -%>
+
 run Geminabox
 

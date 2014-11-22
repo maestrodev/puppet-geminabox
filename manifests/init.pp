@@ -17,6 +17,9 @@
 #   manage_group: whether or not to manage the group resource for the given group
 #   manage_data_dir: whether or not to manage the data directory (disable if file resource is externally created)
 #   manage_config_dir: whether or not to manage the config directory (disable if file resource is externally created)
+#   proxy_url: url and port to http proxy for use with rvm (example: http://proxy.domain.tld:80)
+#   rubygems_proxy: whether or not to enable the rubygems proxy feature in geminabox
+#   allow_remote_failure: whether or not to enable the allow remote failure feature in geminabox
 #
 # Example Usage:
 #
@@ -43,6 +46,9 @@ class geminabox (
   $manage_group = true,
   $manage_data_dir = true,
   $manage_config_dir = true,
+  $proxy_url = undef,
+  $rubygems_proxy = false,
+  $allow_remote_failure = false,
 ) {
 
   # manage users and groups
@@ -72,7 +78,7 @@ class geminabox (
       require => User[$user],
     }
   }
-  
+
   if $manage_data_dir {
     file { $data_dir:
       ensure => 'directory',
@@ -111,9 +117,11 @@ class geminabox (
 
   rvm_gem { 'thin':
     ensure => present,
+    proxy_url => $proxy_url,
   }
   rvm_gem { 'geminabox':
     ensure => $version,
+    proxy_url => $proxy_url,
   }
 
   # ensure the geminabox service is running
