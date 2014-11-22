@@ -1,5 +1,3 @@
-require 'bundler'
-Bundler.require(:rake)
 require 'rake/clean'
 
 CLEAN.include('spec/fixtures/manifests/', 'spec/fixtures/modules/', 'doc', 'pkg')
@@ -8,7 +6,11 @@ CLOBBER.include('.tmp', '.librarian')
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet_blacksmith/rake_tasks'
 
+require 'puppet-lint/tasks/puppet-lint'
 PuppetLint.configuration.send("disable_80chars")
+PuppetLint.configuration.send('disable_class_inherits_from_params_class')
+PuppetLint.configuration.fail_on_warnings = true
+PuppetLint.configuration.relative = true
 
 # use librarian-puppet to manage fixtures instead of .fixtures.yml
 # offers more possibilities like explicit version management, forge
@@ -19,4 +21,4 @@ end
 task :spec_prep => :librarian_spec_prep
 task :spec_system => :clean
 
-task :default => [:clean, :spec]
+task :default => [:clean, :lint, :spec]

@@ -31,17 +31,17 @@
 # other modules you include.
 #
 class geminabox (
-  $config_dir   = "/etc/geminabox",
-  $data_dir     = "/var/lib/geminabox",
-  $log_file     = "/var/log/geminabox.log",
-  $pid_file     = "/var/run/geminabox.pid",
-  $service_name = "geminabox",
-  $user         = "geminabox",
-  $group        = "geminabox",
-  $version      = "present",
+  $config_dir   = '/etc/geminabox',
+  $data_dir     = '/var/lib/geminabox',
+  $log_file     = '/var/log/geminabox.log',
+  $pid_file     = '/var/run/geminabox.pid',
+  $service_name = 'geminabox',
+  $user         = 'geminabox',
+  $group        = 'geminabox',
+  $version      = 'present',
   $port         = 8080,
-  $thin_options = "-d",
-  $ruby_version = "1.9",
+  $thin_options = '-d',
+  $ruby_version = '1.9',
   $manage_user  = true,
   $manage_group = true,
   $manage_data_dir = true,
@@ -64,7 +64,7 @@ class geminabox (
       ensure     => 'present',
       system     => true,
       gid        => $group,
-      home       => $root,
+      home       => $::root,
       managehome => true,
     }
   }
@@ -72,9 +72,9 @@ class geminabox (
   # ensure directories exist
   if $manage_config_dir {
     file { $config_dir:
-      ensure => 'directory',
-      owner => $user,
-      group => $group,
+      ensure  => 'directory',
+      owner   => $user,
+      group   => $group,
       require => User[$user],
     }
   }
@@ -89,18 +89,18 @@ class geminabox (
   }
 
   # ensure necessary files are present/copied
-  file { "$config_dir/$service_name.ru":
-    ensure => 'present',
+  file { "${config_dir}/${service_name}.ru":
+    ensure  => 'present',
     content => template('geminabox/config.ru.erb'),
-    owner => $user,
-    group => $group,
+    owner   => $user,
+    group   => $group,
   }
 
-  file { "/etc/init.d/$service_name":
-    ensure => 'present',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '755',
+  file { "/etc/init.d/${service_name}":
+    ensure  => 'present',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
     content => template('geminabox/geminabox.init.erb')
   }
 
@@ -116,21 +116,19 @@ class geminabox (
   }
 
   rvm_gem { 'thin':
-    ensure => present,
+    ensure    => present,
     proxy_url => $proxy_url,
   }
   rvm_gem { 'geminabox':
-    ensure => $version,
+    ensure    => $version,
     proxy_url => $proxy_url,
   }
 
   # ensure the geminabox service is running
   service { $service_name:
-    ensure     => 'running',
-    enable     => true,
-    hasstatus  => true,
-    subscribe  => [
-      File["$config_dir/$service_name.ru"],
-    ],
+    ensure    => 'running',
+    enable    => true,
+    hasstatus => true,
+    subscribe => [File["${config_dir}/${service_name}.ru"]],
   }
 }
