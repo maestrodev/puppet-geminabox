@@ -129,6 +129,6 @@ class geminabox (
     ensure    => 'running',
     enable    => true,
     hasstatus => true,
-    subscribe => [File["${config_dir}/${service_name}.ru"]],
+    subscribe => [File["${config_dir}/${service_name}.ru"], File["/etc/init.d/${service_name}"]],
   }
 }
