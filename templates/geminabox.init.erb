@@ -43,6 +43,12 @@ DAEMON="thin <%=@thin_options%>"
 USER="<%=@user%>"
 GROUP="<%=@group%>"
 PORT="<%=@port%>"
+
+<% if @proxy_url -%>
+# Gem In A Box uses the http_proxy environment variable to configure httpclient
+http_proxy="<%=@proxy_url%>"
+export http_proxy
+<% end -%>
  
 start() {
   $DAEMON --tag $NAME -u $USER -g $GROUP -c $GEMINABOX_HOME -l $LOG_FILE -P $PID_FILE -p $PORT -R $GEMINABOX_CONFIG start
